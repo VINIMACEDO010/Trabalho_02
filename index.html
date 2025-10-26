@@ -73,279 +73,118 @@
             <h1>Sistema de Transporte Escolar</h1>
             <p>Gerenciamento de Rotas, Custos e Eficiência</p>
         </div>
-
         <div class="content">
             <div class="section">
                 <h2 class="section-title">Configuração de Rotas</h2>
-
                 <div class="form-group">
                     <label for="taxa-penalidade">Taxa de Penalidade por Minuto de Atraso (R$)</label>
                     <input type="number" id="taxa-penalidade" min="0" step="0.01" value="0.50" placeholder="0.50">
                 </div>
-
                 <div id="rotas-container"></div>
-
                 <div class="button-group">
                     <button class="btn-secondary" onclick="adicionarRota()">+ Adicionar Rota</button>
                     <button class="btn-primary" onclick="processarRotas()">Calcular Custos</button>
                 </div>
             </div>
-
             <div id="error-message" class="error-message"></div>
             <div id="success-message" class="success-message"></div>
-
             <div id="loading" class="loading">
                 <div class="spinner"></div>
                 <p>Processando dados...</p>
             </div>
-
             <div id="results-container" class="results-container section">
                 <h2 class="section-title">Resultados do Processamento</h2>
                 <div id="resultados-rotas"></div>
                 <div id="sumario"></div>
             </div>
         </div>
-
-
+        <footer class="footer">
+            Desenvolvido por: <strong>Vinicius Policarpo Macedo e Misael Sardá</strong>
+        </footer>
     </div>
 
     <script>
         const rotasPadrao = [
-            {
-                id: "rota-001",
-                nome: "Rota Centro",
-                km_rodados: 50.5,
-                alunos: 10,
-                consumo_medio_litro_por_km: 0.1,
-                preco_combustivel_por_litro: 5.50,
-                atraso_minutos: 15
-            },
-            {
-                id: "rota-002",
-                nome: "Rota Bairro Sul",
-                km_rodados: 30.0,
-                alunos: 8,
-                consumo_medio_litro_por_km: 0.12,
-                preco_combustivel_por_litro: 5.50,
-                atraso_minutos: 0
-            },
-            {
-                id: "rota-003",
-                nome: "Rota Zona Rural",
-                km_rodados: 75.2,
-                alunos: 12,
-                consumo_medio_litro_por_km: 0.09,
-                preco_combustivel_por_litro: 5.50,
-                atraso_minutos: 5
-            }
+            {id:"rota-001",nome:"Rota Centro",km_rodados:50.5,alunos:10,consumo_medio_litro_por_km:0.1,preco_combustivel_por_litro:5.50,atraso_minutos:15},
+            {id:"rota-002",nome:"Rota Bairro Sul",km_rodados:30.0,alunos:8,consumo_medio_litro_por_km:0.12,preco_combustivel_por_litro:5.50,atraso_minutos:0},
+            {id:"rota-003",nome:"Rota Zona Rural",km_rodados:75.2,alunos:12,consumo_medio_litro_por_km:0.09,preco_combustivel_por_litro:5.50,atraso_minutos:5}
         ];
-
-        let rotas = [...rotasPadrao];
-
-        function inicializar() {
-            renderizarRotas();
-        }
-
-        function renderizarRotas() {
-            const container = document.getElementById('rotas-container');
-            container.innerHTML = '';
-
-            rotas.forEach((rota, index) => {
-                const rotaHtml = `
-                    <div class="rota-card" data-index="${index}">
-                        <div class="rota-card-header">
-                            <div class="rota-card-title">${rota.nome}</div>
-                            <button class="btn-danger" onclick="removerRota(${index})">Remover</button>
-                        </div>
-                        <div class="rota-grid">
-                            <div class="form-group">
-                                <label>ID da Rota</label>
-                                <input type="text" value="${rota.id}" onchange="atualizarRota(${index}, 'id', this.value)" placeholder="rota-001">
-                            </div>
-                            <div class="form-group">
-                                <label>Nome da Rota</label>
-                                <input type="text" value="${rota.nome}" onchange="atualizarRota(${index}, 'nome', this.value)" placeholder="Rota Centro">
-                            </div>
-                            <div class="form-group">
-                                <label>Km Rodados</label>
-                                <input type="number" value="${rota.km_rodados}" min="0.1" step="0.1" onchange="atualizarRota(${index}, 'km_rodados', parseFloat(this.value.replace(',', '.')))" placeholder="50.5">
-                            </div>
-                            <div class="form-group">
-                                <label>Número de Alunos</label>
-                                <input type="number" value="${rota.alunos}" min="1" step="1" onchange="atualizarRota(${index}, 'alunos', parseInt(this.value))" placeholder="10">
-                            </div>
-                            <div class="form-group">
-                                <label>Consumo (L/km)</label>
-                                <input type="number" value="${rota.consumo_medio_litro_por_km}" min="0.01" step="0.01" onchange="atualizarRota(${index}, 'consumo_medio_litro_por_km', parseFloat(this.value.replace(',', '.')))" placeholder="0.1">
-                            </div>
-                            <div class="form-group">
-                                <label>Preço Combustível (R$/L)</label>
-                                <input type="number" value="${rota.preco_combustivel_por_litro}" min="0.01" step="0.01" onchange="atualizarRota(${index}, 'preco_combustivel_por_litro', parseFloat(this.value.replace(',', '.')))" placeholder="5.50">
-                            </div>
-                            <div class="form-group">
-                                <label>Atraso (minutos)</label>
-                                <input type="number" value="${rota.atraso_minutos || 0}" min="0" step="1" onchange="atualizarRota(${index}, 'atraso_minutos', parseInt(this.value))" placeholder="0">
-                            </div>
-                        </div>
+        let rotas=[...rotasPadrao];
+        function inicializar(){renderizarRotas();}
+        function renderizarRotas(){
+            const c=document.getElementById('rotas-container');c.innerHTML='';
+            rotas.forEach((r,i)=>{c.innerHTML+=`
+                <div class="rota-card" data-index="${i}">
+                    <div class="rota-card-header">
+                        <div class="rota-card-title">${r.nome}</div>
+                        <button class="btn-danger" onclick="removerRota(${i})">Remover</button>
                     </div>
-                `;
-                container.innerHTML += rotaHtml;
-            });
+                    <div class="rota-grid">
+                        <div class="form-group"><label>ID da Rota</label><input type="text" value="${r.id}" onchange="atualizarRota(${i},'id',this.value)"></div>
+                        <div class="form-group"><label>Nome da Rota</label><input type="text" value="${r.nome}" onchange="atualizarRota(${i},'nome',this.value)"></div>
+                        <div class="form-group"><label>Km Rodados</label><input type="number" value="${r.km_rodados}" onchange="atualizarRota(${i},'km_rodados',parseFloat(this.value.replace(',','.')))"></div>
+                        <div class="form-group"><label>Número de Alunos</label><input type="number" value="${r.alunos}" onchange="atualizarRota(${i},'alunos',parseInt(this.value))"></div>
+                        <div class="form-group"><label>Consumo (L/km)</label><input type="number" value="${r.consumo_medio_litro_por_km}" onchange="atualizarRota(${i},'consumo_medio_litro_por_km',parseFloat(this.value.replace(',','.')))"></div>
+                        <div class="form-group"><label>Preço Combustível (R$/L)</label><input type="number" value="${r.preco_combustivel_por_litro}" onchange="atualizarRota(${i},'preco_combustivel_por_litro',parseFloat(this.value.replace(',','.')))"></div>
+                        <div class="form-group"><label>Atraso (minutos)</label><input type="number" value="${r.atraso_minutos}" onchange="atualizarRota(${i},'atraso_minutos',parseInt(this.value))"></div>
+                    </div>
+                </div>`});
         }
-
-        function adicionarRota() {
-            const novaRota = {
-                id: `rota-${String(rotas.length + 1).padStart(3, '0')}`,
-                nome: `Nova Rota ${rotas.length + 1}`,
-                km_rodados: 0,
-                alunos: 0,
-                consumo_medio_litro_por_km: 0.1,
-                preco_combustivel_por_litro: 5.50,
-                atraso_minutos: 0
-            };
-            rotas.push(novaRota);
-            renderizarRotas();
-        }
-
-        function removerRota(index) {
-            rotas.splice(index, 1);
-            renderizarRotas();
-        }
-
-        function atualizarRota(index, campo, valor) {
-            if (typeof valor === 'string' && !isNaN(parseFloat(valor.replace(',', '.')))) {
-                rotas[index][campo] = parseFloat(valor.replace(',', '.'));
-            } else {
-                rotas[index][campo] = valor;
-            }
-        }
-
-        async function processarRotas() {
-            const taxaPenalidade = parseFloat(document.getElementById('taxa-penalidade').value) || 0.50;
-
+        function adicionarRota(){rotas.push({id:`rota-${String(rotas.length+1).padStart(3,'0')}`,nome:`Nova Rota ${rotas.length+1}`,km_rodados:0,alunos:0,consumo_medio_litro_por_km:0.1,preco_combustivel_por_litro:5.50,atraso_minutos:0});renderizarRotas();}
+        function removerRota(i){rotas.splice(i,1);renderizarRotas();}
+        function atualizarRota(i,c,v){rotas[i][c]=typeof v==='string'&&!isNaN(parseFloat(v.replace(',','.')))?parseFloat(v.replace(',','.')):v;}
+        async function processarRotas(){
+            const t=parseFloat(document.getElementById('taxa-penalidade').value)||0.50;
             document.getElementById('error-message').classList.remove('show');
             document.getElementById('success-message').classList.remove('show');
-
-            if (rotas.length === 0) {
-                mostrarErro('Adicione pelo menos uma rota antes de processar.');
-                return;
-            }
-
+            if(rotas.length===0){mostrarErro('Adicione pelo menos uma rota antes de processar.');return;}
             document.getElementById('loading').classList.add('show');
-
-            try {
-                const response = await fetch('api.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        rotas: rotas,
-                        taxa_penalidade_por_minuto: taxaPenalidade
-                    })
-                });
-
-                const dados = await response.json();
-
-                if (!response.ok || !dados.sucesso) {
-                    throw new Error(dados.erro || 'Erro ao processar rotas');
-                }
-
-                exibirResultados(dados.resultados, dados.sumario);
+            try{
+                const r=await fetch('api.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rotas:rotas,taxa_penalidade_por_minuto:t})});
+                const d=await r.json();
+                if(!r.ok||!d.sucesso)throw new Error(d.erro||'Erro ao processar rotas');
+                exibirResultados(d.resultados,d.sumario);
                 mostrarSucesso('Rotas processadas com sucesso!');
-
-            } catch (erro) {
-                mostrarErro(`Erro: ${erro.message}`);
-            } finally {
-                document.getElementById('loading').classList.remove('show');
-            }
+            }catch(e){mostrarErro(`Erro: ${e.message}`);}
+            finally{document.getElementById('loading').classList.remove('show');}
         }
-
-        function exibirResultados(resultados, sumario) {
-            const resultadosContainer = document.getElementById('resultados-rotas');
-            const sumarioContainer = document.getElementById('sumario');
-
-            resultadosContainer.innerHTML = '';
-
-            resultados.forEach(resultado => {
-                const penalidade = resultado.penalidade_aplicada > 0 
-                    ? `<div class="penalidade-badge">Penalidade: R$ ${resultado.penalidade_aplicada.toFixed(2)}</div>`
-                    : '';
-
-                const rotaHtml = `
+        function exibirResultados(r,s){
+            const rc=document.getElementById('resultados-rotas');
+            const sc=document.getElementById('sumario');
+            rc.innerHTML='';
+            r.forEach(x=>{
+                const p=x.penalidade_aplicada>0?`<div class="penalidade-badge">Penalidade: R$ ${x.penalidade_aplicada.toFixed(2)}</div>`:'';
+                rc.innerHTML+=`
                     <div class="resultado-rota">
                         <div class="resultado-rota-header">
-                            <div class="resultado-rota-title">${resultado.nome}</div>
-                            <div class="resultado-rota-id">${resultado.id}</div>
+                            <div class="resultado-rota-title">${x.nome}</div>
+                            <div class="resultado-rota-id">${x.id}</div>
                         </div>
                         <div class="resultado-grid">
-                            <div class="resultado-item">
-                                <div class="resultado-label">Custo Total da Rota</div>
-                                <div class="resultado-valor">R$ ${resultado.custo_total_rota.toFixed(2)}</div>
-                            </div>
-                            <div class="resultado-item">
-                                <div class="resultado-label">Custo por Aluno</div>
-                                <div class="resultado-valor">R$ ${resultado.custo_por_aluno_rota.toFixed(2)}</div>
-                            </div>
-                            <div class="resultado-item">
-                                <div class="resultado-label">Eficiência (km/aluno)</div>
-                                <div class="resultado-valor">${resultado.eficiencia_km_por_aluno.toFixed(2)}</div>
-                            </div>
-                        </div>
-                        ${penalidade}
-                    </div>
-                `;
-                resultadosContainer.innerHTML += rotaHtml;
+                            <div class="resultado-item"><div class="resultado-label">Custo Total da Rota</div><div class="resultado-valor">R$ ${x.custo_total_rota.toFixed(2)}</div></div>
+                            <div class="resultado-item"><div class="resultado-label">Custo por Aluno</div><div class="resultado-valor">R$ ${x.custo_por_aluno_rota.toFixed(2)}</div></div>
+                            <div class="resultado-item"><div class="resultado-label">Eficiência (km/aluno)</div><div class="resultado-valor">${x.eficiencia_km_por_aluno.toFixed(2)}</div></div>
+                        </div>${p}
+                    </div>`;
             });
-
-            const statusCustoGlobal = sumario.invariante_custo_global ? 'OK' : 'FALHA';
-            const statusKmRodados = sumario.invariante_km_rodados ? 'OK' : 'FALHA';
-
-            const sumarioHtml = `
+            const scg=s.invariante_custo_global?'OK':'FALHA';
+            const skr=s.invariante_km_rodados?'OK':'FALHA';
+            sc.innerHTML=`
                 <div class="sumario">
                     <div class="sumario-grid">
-                        <div class="sumario-item">
-                            <div class="sumario-label">Custo Global Total</div>
-                            <div class="sumario-valor">R$ ${sumario.custo_global_total.toFixed(2)}</div>
-                        </div>
-                        <div class="sumario-item">
-                            <div class="sumario-label">Total Rateado</div>
-                            <div class="sumario-valor">R$ ${sumario.total_rateado.toFixed(2)}</div>
-                        </div>
+                        <div class="sumario-item"><div class="sumario-label">Custo Global Total</div><div class="sumario-valor">R$ ${s.custo_global_total.toFixed(2)}</div></div>
+                        <div class="sumario-item"><div class="sumario-label">Total Rateado</div><div class="sumario-valor">R$ ${s.total_rateado.toFixed(2)}</div></div>
                     </div>
                     <div class="invariantes">
-                        <div class="invariante-item">
-                            <span>Invariante: Custo Global vs Total Rateado</span>
-                            <span class="status-${statusCustoGlobal.toLowerCase()}">${statusCustoGlobal}</span>
-                        </div>
-                        <div class="invariante-item">
-                            <span>Invariante: Km Rodados > 0</span>
-                            <span class="status-${statusKmRodados.toLowerCase()}">${statusKmRodados}</span>
-                        </div>
+                        <div class="invariante-item"><span>Invariante: Custo Global vs Total Rateado</span><span class="status-${scg.toLowerCase()}">${scg}</span></div>
+                        <div class="invariante-item"><span>Invariante: Km Rodados > 0</span><span class="status-${skr.toLowerCase()}">${skr}</span></div>
                     </div>
-                </div>
-            `;
-            sumarioContainer.innerHTML = sumarioHtml;
-
+                </div>`;
             document.getElementById('results-container').classList.add('show');
         }
-
-        function mostrarErro(mensagem) {
-            const errorDiv = document.getElementById('error-message');
-            errorDiv.textContent = mensagem;
-            errorDiv.classList.add('show');
-        }
-
-        function mostrarSucesso(mensagem) {
-            const successDiv = document.getElementById('success-message');
-            successDiv.textContent = mensagem;
-            successDiv.classList.add('show');
-            setTimeout(() => {
-                successDiv.classList.remove('show');
-            }, 3000);
-        }
-
-        window.addEventListener('DOMContentLoaded', inicializar);
+        function mostrarErro(m){const e=document.getElementById('error-message');e.textContent=m;e.classList.add('show');}
+        function mostrarSucesso(m){const s=document.getElementById('success-message');s.textContent=m;s.classList.add('show');setTimeout(()=>{s.classList.remove('show');},3000);}
+        window.addEventListener('DOMContentLoaded',inicializar);
     </script>
 </body>
 </html>
